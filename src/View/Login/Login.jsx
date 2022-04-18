@@ -14,9 +14,12 @@ import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { login } from '../../Redducer/userReducer';
+import { login ,createUser } from '../../Redducer/userReducer';
 import AccessibleForwardIcon from '@mui/icons-material/AccessibleForward';
 import axios from "axios";
+import { useHistory } from 'react-router-dom';
+import {useNavigate} from 'react-router-dom';
+
 const url = "https://61e1947863f8fc0017618d2b.mockapi.io/api/staffs/todo";
 
 const getListUserApi = ()=>{
@@ -29,7 +32,7 @@ const getListUser = async ()=>{
    return hh.data
 }
 
-const addUser = (user)=>{
+export const addUser = (user)=>{
    
    return axios.post(url,user);
 }
@@ -61,7 +64,7 @@ const theme = createTheme();
 export default function SignInSide() {
 
   const dispatch = useDispatch();
-  
+  const navigate = useNavigate();
   const [user,setUser] = useState("")
   const [password,setPassword] = useState("")
   const handlesubmit = async (e)=>{
@@ -69,25 +72,24 @@ export default function SignInSide() {
         let userInfo = await getUser(user)
        
         if(userInfo){
-          console.log("1")
+          
           if(userInfo.password == password){
-
-            dispatch(login({
-              user:userInfo.username
-            }))
+            localStorage.setItem("login",true)
+            dispatch(login(userInfo))
           
           }
         }else{
-          console.log("2")
-            await addUser({
-              username:user,
-              password:password,
-              todo:[]
-            })
-            dispatch(login({
-              user:user
-            }))
+           let a = await addUser({
+            username:user,
+            password:password,
+            todoList:[]
+
+          })
+           localStorage.setItem("login",true)
+            dispatch(login(a.data))
         }
+       
+        navigate('/todo')
         
       
       
