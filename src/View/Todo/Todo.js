@@ -35,7 +35,13 @@ import { useSelector } from "react-redux";
 import { selectTodoList , selectUser } from "../../Redducer/userReducer";
 import {useNavigate} from 'react-router-dom';
 import Loading from "../Loading";
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert from '@mui/material/Alert';
+import Stack from '@mui/material/Stack';
 
+const Alert = React.forwardRef(function Alert(props, ref) {
+    return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+  });
 
 
 
@@ -45,7 +51,7 @@ export default function Todo(props) {
 
     const [loading,setLoading] = useState(true);
     const navigate = useNavigate();
-    
+    const [showAlert,setShowAlert] = useState(false)
     const [inputTodo, setInputTodo] = useState("")
     const [preTodo, setPreTodo] = useState({
         Todo: "",
@@ -75,7 +81,19 @@ export default function Todo(props) {
 
     },)
     
-   
+   useEffect( ()=>{
+     for(let i = 0 ; i< listTodo.length ; i++){
+         if(listTodo[i].checked){
+            setdeleteAllChecked(true)
+            break
+         }else{
+             if(i == listTodo.length -1){
+                setdeleteAllChecked(false)
+             }
+         }
+     }
+     
+   },[listTodo])
     
 
     
@@ -174,12 +192,16 @@ export default function Todo(props) {
                                         onClick={() => {
 
                                             let hh = [...listTodo]
-                                            hh.map((h) => {
-                                                if (h.edit) {
-                                                    h.edit = false
-                                                    h.Todo = preTodo.Todo
+                                            for(let i=0;i<hh.length;i++){
+                                                if (hh[i].edit) {
+                                                    hh[i] = {
+                                                        ...hh[i],
+                                                        edit:false,
+                                                        Todo:preTodo.Todo
+                                                    }
+                                                    
                                                 }
-                                            })
+                                            }
                                             setPreTodo({
                                                 Todo: hh[index].Todo,
                                                 edit: false
@@ -205,12 +227,7 @@ export default function Todo(props) {
 
                                        if(td.checked){
                                         let haha = [...listTodo]
-                                        for( let i =  0 ; i< haha.length ; i++){
-                                            if(haha[i].edit){
-                                                haha[i].edit = false;
-                                            }
-                                            
-                                        }
+                                        
                                         haha.splice(index, 1)
 
                                         dispatch(updateListTodo({
@@ -226,7 +243,7 @@ export default function Todo(props) {
                             </Paper>)
                         } else {
                             return (
-                                <Paper variant="outlined" square sx={{ p: '2px 4px', margin: 'auto', marginTop: '10px', display: 'flex', alignItems: 'center', width: 700 }}
+                                <Paper variant="outlined" square sx={{ p: '2px 4px', margin: 'auto', marginTop: '10px', display: 'flex', alignItems: 'center', width: "83%" }}
                                 >
 
                                     <TextField
@@ -290,7 +307,7 @@ export default function Todo(props) {
                         }
                     })
                 }
-                <div style={{ marginTop: "20px",marginRight:"50px", display:"flex", justifyContent:"right" }}>
+                <div style={{ marginTop: "20px",marginRight:"8%", display:"flex", justifyContent:"right" }}>
 
                  <Tooltip title="Xóa các lựa chọn">
                        
@@ -306,23 +323,47 @@ export default function Todo(props) {
                            dispatch(updateListTodo({
                                listTodo:[...hh]
                            }))
-                        }} color={!deleteAllChecked&& "disabled" || "error"}>Xóa các lựa chọn</Typography>
+                        }} color={!deleteAllChecked&& "gray" || "error"}>Xóa các lựa chọn</Typography>
                        
                    </Tooltip>
+                   
 
                 </div>
+                <div style={{ marginTop: "5px",marginRight:"8%", display:"flex", justifyContent:"right" }}>
+
+<Tooltip title="Lưu các thay đổi">
+      
+          <Typography style={{cursor:"pointer",fontWeight:"600"}} onClick={ async()=>{
+               let newUserx = {
+                ...userData
+            }
+            console.log(newUserx)
+            newUserx.todo = [...listTodo]
+
+            await updateUser(newUserx)
+            setShowAlert(true)
+            
+       }} color="primary">Lưu lại các thay đổi</Typography>
+      
+  </Tooltip>
+
+  <Snackbar  open={showAlert} onClose={()=>{
+      setShowAlert(false)
+  }} autoHideDuration={1500}>
+  <Alert color="primary" onClose={()=>{
+      setShowAlert(false)
+  }}
+  severity="success" sx={{ width: '100%' , maxWidth:"280px",margin:"auto",marginTop:"0px" }} >Lưu các thay đổi thành công</Alert>
+      </Snackbar>
+  
+
+</div>
                 <div style={{ marginTop: "20px" }}>
                     
                     
-                    <Tooltip title="Đăng xuất và lưu các thay đổi">
+                    <Tooltip title="Đăng xuất">
                         <IconButton onClick={async () => {
-                            let newUserx = {
-                                ...userData
-                            }
-                            console.log(newUserx)
-                            newUserx.todo = [...listTodo]
-
-                            await updateUser(newUserx)
+                          
                             localStorage.removeItem('login')
                             dispatch(logout())
                             navigate('/')
@@ -331,6 +372,7 @@ export default function Todo(props) {
                             <LogoutIcon />
                         </IconButton>
                     </Tooltip>
+                    
 
                     
                 </div>
