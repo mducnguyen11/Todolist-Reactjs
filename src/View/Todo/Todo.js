@@ -105,16 +105,16 @@ export default function Todo(props) {
         <div className="Todo-bg">
           
                 <div className="todolist">
-                <Typography sx={{ m: 0, textAlign: 'left', paddingLeft: '8%', paddingBottom: '20px' }} variant="h6" gutterBottom component="div">
-                    Todolist
+                <Typography sx={{ m: 0, textAlign: 'left', paddingLeft: '8%', paddingBottom: '0px' }} variant="h6" gutterBottom component="div">
+                    YOUR TO DO LIST
                 </Typography>
                 <Typography sx={{ m: 0, textAlign: 'left', paddingLeft: '8%', paddingBottom: '5px' }} variant="body1" gutterBottom component="div">
                     Xin chào : {user}
                 </Typography>
-                <Typography sx={{ m: 0, textAlign: 'left', paddingLeft: '8%', paddingBottom: '20px' }} variant="body1" gutterBottom component="div">
+                <Typography sx={{ m: 0, textAlign: 'left', width:'83%', paddingLeft: '8%', paddingBottom: '30px' }} variant="body1" gutterBottom component="div">
                     Hãy viết ra những công việc bạn cần làm ~
                 </Typography>
-                <Paper variant="outlined" square sx={{ p: '2px 4px', margin: 'auto', display: 'flex', alignItems: 'center', width: "83%", }}>
+                <Paper variant="outlined" square sx={{ p: '0px 4px', margin: 'auto', display: 'flex', alignItems: 'center', width: "83%", }}>
                     <TextField
                         label=""
                         value={inputTodo}
