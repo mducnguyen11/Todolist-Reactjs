@@ -69,7 +69,7 @@ export default function Todo(props) {
 
         setTimeout(()=>{
            setLoading(false)
-        },1500)
+        },1000)
         const login = localStorage.getItem("login");
 
         if(!login && checkLogin){
@@ -337,7 +337,7 @@ export default function Todo(props) {
                let newUserx = {
                 ...userData
             }
-            console.log(newUserx)
+           
             newUserx.todo = [...listTodo]
 
             await updateUser(newUserx)
@@ -363,10 +363,19 @@ export default function Todo(props) {
                     
                     <Tooltip title="Đăng xuất">
                         <IconButton onClick={async () => {
-                          
-                            localStorage.removeItem('login')
-                            dispatch(logout())
-                            navigate('/')
+                            let newUserx = {
+                                ...userData
+                            }                           
+                            newUserx.todo = [...listTodo]
+                
+                            await updateUser(newUserx)
+                            setShowAlert(true)   
+                            setTimeout(()=>{
+                                    localStorage.removeItem('login')
+                                    dispatch(logout())
+                                    navigate('/')
+                             },1500)                       
+                            
                            
                         }}>
                             <LogoutIcon />
